@@ -33,7 +33,18 @@ video {
 }
 
 h3 {
-	font-size: 5rem;
+	font-size: 3rem;
+	font-weight: 600;
+
+	white-space: nowrap;
+	/* tvingar en rad */
+	overflow: hidden;
+	/* gömmer det som inte får plats */
+	text-overflow: ellipsis;
+}
+
+p {
+	font-size: 1.5rem;
 	font-weight: 600;
 }
 
@@ -50,6 +61,10 @@ li {
 	display: grid;
 }
 
+.grid-columns-two {
+	grid-template-columns: 1fr 1fr;
+}
+
 .grid-columns-three {
 	grid-template-columns: 1fr 1fr 1fr;
 }
@@ -60,6 +75,11 @@ li {
 
 .gap-s {
 	gap: 1rem;
+}
+
+.game-list {
+	max-width: 70rem;
+	margin: 0 auto;
 }
 
 .card {
@@ -73,7 +93,67 @@ li {
 		width: 100%;
 		object-fit: cover;
 		display: block;
+
+		aspect-ratio: 1 / 1;
+		/* alltid lika hög som bred */
+		object-fit: cover;
 	}
+}
+
+.cart-btn {
+	color: white;
+	background-color: orange;
+	border-style: none;
+	font-weight: 600;
+	border-radius: 1.5rem;
+	padding: 0.5rem;
+	text-align: center;
+	cursor: pointer;
+
+	transition: filter 0.2s ease, transform 0.1s ease;
+
+	&:not(:disabled):hover {
+		filter: brightness(1.15);
+	}
+
+	&:disabled {
+		filter: brightness(0.8);
+		cursor: not-allowed;
+	}
+
+	&:not(:disabled):active {
+		transform: scale(0.98);
+	}
+}
+
+.stock-status {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-weight: 600;
+}
+
+.stock-dot {
+	width: 0.75rem;
+	height: 0.75rem;
+	border-radius: 50%;
+	display: inline-block;
+}
+
+/* colors */
+.stock-dot.in-stock {
+	background-color: #22c55e;
+	/* green */
+}
+
+.stock-dot.low-stock {
+	background-color: #facc15;
+	/* yellow */
+}
+
+.stock-dot.out-of-stock {
+	background-color: #ef4444;
+	/* red */
 }
 
 li[data-type] {
