@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="sv">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Typescript Boardgame Project</title>
+	<link rel="stylesheet" href="./style.css">
+	<script type="module" src="./dist/index.js" defer></script>
+</head>
+
+<body>
+	<article class="card">
+		<a class="grid gap-s" href="#">
+			<img id="cover-img" src="assets/images/.jpg" alt="spel">
+			<h3 id="game-title">Spel titel</h3>
+			<ul class="grid grid-columns-three gap-xs" aria-label="Egenskaper">
+				<li id="players" data-type="players">Spelare</li>
+
+				<li id="playtime" data-type="playtime">Speltid</li>
+
+				<li id="age-recommendation" data-type="age">Ålder</li>
+			</ul>
+			<footer class="">
+				<p id="publisher">Utgivare:</p>
+				<p>
+					Utgivningsår: <time id="release-year"></time>
+				</p>
+			</footer>
+		</a>
+	</article>
+</body>
+
+</html>

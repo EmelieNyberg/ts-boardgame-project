@@ -1,0 +1,97 @@
+/* makes sizing simpler */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+/* remove default spacing */
+/* force styling of type through styling, rather than elements */
+
+* {
+	margin: 0;
+	padding: 0;
+	font: inherit;
+}
+
+/* min body height */
+
+body {
+	min-height: 100vh;
+	background-color: hsl(0, 0%, 95%);
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+/* responsive images/videos */
+img,
+picture,
+svg,
+video {
+	display: block;
+	max-width: 100%;
+}
+
+h3 {
+	font-size: 5rem;
+	font-weight: 600;
+}
+
+a {
+	text-decoration: none;
+	color: rgb(31, 31, 31)
+}
+
+li {
+	list-style: none;
+}
+
+.grid {
+	display: grid;
+}
+
+.grid-columns-three {
+	grid-template-columns: 1fr 1fr 1fr;
+}
+
+.gap-xs {
+	gap: 0.5rem;
+}
+
+.gap-s {
+	gap: 1rem;
+}
+
+.card {
+	background-color: white;
+	border-radius: 2rem;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+	margin: 2rem;
+	padding: 2rem;
+
+	img {
+		width: 100%;
+		object-fit: cover;
+		display: block;
+	}
+}
+
+li[data-type] {
+	color: white;
+	font-weight: 600;
+	border-radius: 1.5rem;
+	padding: 0.5rem;
+	text-align: center;
+}
+
+li[data-type="players"] {
+	background-color: lightskyblue;
+}
+
+li[data-type="playtime"] {
+	background-color: lightcoral;
+}
+
+li[data-type="age"] {
+	background-color: lightseagreen;
+}
