@@ -1,3 +1,4 @@
+// First version
 
 type Stock = "I lager" | "Fåtal kvar" | "Slut";
 
