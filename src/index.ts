@@ -124,7 +124,7 @@ function renderGames() {
 		// Tömmer listan
 		gameListContainer.replaceChildren();
 	}
-	games.forEach((gameItem) => {
+	games.forEach(({ game, price, stock }) => {
 
 		// Fallback bild om det inte finns något från datan
 		const FALLBACK_COVER = "https://cdn.dribbble.com/userupload/20492562/file/original-eb6386e74bffac7624ca8ef3c9015f2b.jpg?resize=400x0";
@@ -136,40 +136,39 @@ function renderGames() {
 		// Produkt bild
 		const img = document.createElement("img");
 		img.classList.add("cover-img");
-		img.src = gameItem.game.publication.coverImage ?? FALLBACK_COVER;
-		img.alt = `Omslag till ${gameItem.game.title}`;
+		img.src = game.publication.coverImage ?? FALLBACK_COVER;
+		img.alt = `Omslag till ${game.title}`;
 
 		// Titel
 		const title = document.createElement("h3");
-		title.textContent = gameItem.game.title;
+		title.textContent = game.title;
 
 		// Pris
-		const price = document.createElement("p");
-		price.textContent = `${gameItem.price} kr`;
+		const priceItem = document.createElement("p");
+		priceItem.textContent = `${price} kr`;
 
 		// Lagerstatus
-		const stock = document.createElement("p");
-		stock.classList.add("stock-status");
+		const stockItem = document.createElement("p");
+		stockItem.classList.add("stock-status");
 
 		// Skapa tom span (pricken)
 		const stockDot = document.createElement("span");
 		stockDot.classList.add("stock-dot");
 
 		// Lägg klass baserat på lagerstatus
-		if (gameItem.stock === "I lager") {
+		if (stock === "I lager") {
 			stockDot.classList.add("in-stock");
-		} else if (gameItem.stock === "Fåtal kvar") {
+		} else if (stock === "Fåtal kvar") {
 			stockDot.classList.add("low-stock");
 		} else {
 			stockDot.classList.add("out-of-stock");
 		};
 
 		// Texten efter pricken
-		const stockText = document.createTextNode(gameItem.stock);
+		const stockText = document.createTextNode(stock);
 
 		// Montera: ● I lager
-		stock.append(stockDot, stockText);
-
+		stockItem.append(stockDot, stockText);
 
 		// UL med klasser + aria-label
 		const featuresList = document.createElement("ul");
@@ -179,17 +178,17 @@ function renderGames() {
 		// LI 1: players + data-type="players"
 		const playersLi = document.createElement("li");
 		playersLi.dataset.type = "players";
-		playersLi.textContent = `${gameItem.game.minPlayers}–${gameItem.game.maxPlayers} Spelare`;
+		playersLi.textContent = `${game.minPlayers}–${game.maxPlayers} Spelare`;
 
 		// LI 2: playtime + data-type="playtime"
 		const playtimeLi = document.createElement("li");
 		playtimeLi.dataset.type = "playtime";
-		playtimeLi.textContent = `${gameItem.game.playTime} Min`;
+		playtimeLi.textContent = `${game.playTime} Min`;
 
 		// LI 3: age + data-type="age"
 		const ageLi = document.createElement("li");
 		ageLi.dataset.type = "age";
-		ageLi.textContent = `${gameItem.game.ageRecommendation}+ År`;
+		ageLi.textContent = `${game.ageRecommendation}+ År`;
 
 		// Montera li i ul
 		featuresList.append(playersLi, playtimeLi, ageLi);
@@ -199,7 +198,7 @@ function renderGames() {
 		addToCartButton.classList.add("cart-btn");
 
 		// Om varan är slut disable button, annars lägg i varukorg
-		if (gameItem.stock === "Slut") {
+		if (stock === "Slut") {
 			addToCartButton.textContent = "Slut i lager";
 			addToCartButton.disabled = true;
 		} else {
@@ -207,12 +206,12 @@ function renderGames() {
 
 			// Klick-event
 			addToCartButton.addEventListener("click", () => {
-				console.log(`Du köpte ${gameItem.game.title}!`);
+				console.log(`Du köpte ${game.title}!`);
 			});
 		};
 
 		// Montera allt i article
-		article.append(img, title, price, stock, featuresList, addToCartButton);
+		article.append(img, title, priceItem, stockItem, featuresList, addToCartButton);
 
 		// Montera allt i main som finns i html.
 		gameListContainer.append(article);
@@ -231,7 +230,7 @@ renderGames();
 const openModalBtn = document.querySelector("#open-modal-btn") as HTMLButtonElement;
 const dialog = document.querySelector("#form-dialog") as HTMLDialogElement;
 const closeModalBtn = document.querySelector("#close-modal-btn") as HTMLButtonElement;
-const addNewGameBtn = document.querySelector("#add-new-game") as HTMLFormElement;
+const addNewGameForm = document.querySelector("#add-new-game") as HTMLFormElement;
 const inputTitle = document.querySelector("#input-title") as HTMLInputElement;
 const inputNumbPlayers = document.querySelector("#input-numb-players") as HTMLInputElement;
 const inputPlayTime = document.querySelector("#input-play-time") as HTMLInputElement;
@@ -252,7 +251,7 @@ closeModalBtn.addEventListener("click", () => {
 });
 
 // Spara ett nytt spel
-addNewGameBtn.addEventListener("submit", (e) => {
+addNewGameForm.addEventListener("submit", (e) => {
 	e.preventDefault();
 
 	const title = inputTitle.value;
@@ -295,5 +294,5 @@ addNewGameBtn.addEventListener("submit", (e) => {
 	games.push(newGame);
 	renderGames();
 	dialog.close();
-	addNewGameBtn.reset();
+	addNewGameForm.reset();
 });
