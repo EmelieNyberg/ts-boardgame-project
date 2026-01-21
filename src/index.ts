@@ -1,4 +1,4 @@
-// 3:rd version
+// 4:th version
 
 // =======================
 //    Interfaces/Typer
@@ -196,6 +196,8 @@ function renderGames() {
 		// Köp-knapp
 		const addToCartButton = document.createElement("button");
 		addToCartButton.classList.add("cart-btn");
+		// gör ett dataset som heter game id som hämtas från datan (id) och görs om till string (enbart string funkar i html)
+		addToCartButton.dataset.gameId = String(game.id);
 
 		// Om varan är slut disable button, annars lägg i varukorg
 		if (stock === "Slut") {
@@ -203,11 +205,6 @@ function renderGames() {
 			addToCartButton.disabled = true;
 		} else {
 			addToCartButton.textContent = "Lägg till i varukorgen";
-
-			// Klick-event
-			addToCartButton.addEventListener("click", () => {
-				console.log(`Du köpte ${game.title}!`);
-			});
 		};
 
 		// Montera allt i article
@@ -220,6 +217,33 @@ function renderGames() {
 };
 
 renderGames();
+
+
+// Klick-event för att lägga i varukorgen
+if (gameListContainer) {
+	gameListContainer.addEventListener("click", (e) => {
+		const target = e.target as HTMLElement;
+
+		// vi vill bara reagera om man klickar på en .cart-btn (eller något inuti den)
+		const button = target.closest(".cart-btn") as HTMLButtonElement | null;
+		if (!button) return;
+
+		// om knappen är disabled (Slut i lager), gör inget.
+		if (button.disabled) return;
+
+		//Från HTML så är gameId en string (måste var det i html), men jag gör om till
+		//Number eftersom game.id från interface är nummer. Om gameId saknas så stoppas programmet
+		const gameId = Number(button.dataset.gameId);
+		if (Number.isNaN(gameId)) return;
+
+		//Hitta spelet vars id är samma som id:t på knappen jag klickade på.
+		//Om det inte är en match, avsluta programmet.
+		const gameItem = games.find((item) => item.game.id === gameId);
+		if (!gameItem) return;
+
+		console.log(`Du köpte ${gameItem.game.title}!`);
+	});
+};
 
 // =======================
 //    MODAL FÖR ATT
