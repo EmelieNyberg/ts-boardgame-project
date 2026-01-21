@@ -1,109 +1,11 @@
-// 4:th version
+// 5:th version
 
-// =======================
-//    Interfaces/Typer
-// =======================
+import type { BoardGameListing, StockStatus } from "./models/BoardGame.js";
+import { getBoardGameListing } from "./services/BoardGameService.js";
+import { renderGames } from "./components/GameList.js";
 
-type StockStatus = "I lager" | "Fåtal kvar" | "Slut";
+const games: BoardGameListing[] = getBoardGameListing();
 
-interface BoardGame {
-	id: number;
-	title: string;
-	minPlayers: number;
-	maxPlayers: number;
-	playTime: number;
-	ageRecommendation: number;
-	publication: PublisherDetails;
-};
-
-interface PublisherDetails {
-	publisher: string;
-	releaseYear: number;
-	coverImage?: string;
-};
-
-interface BoardGameListing {
-	game: BoardGame;
-	stock: StockStatus;
-	price: number;
-};
-
-// =======================
-//    DATA
-// =======================
-
-const games: BoardGameListing[] = [
-	{
-		game: {
-			id: 1,
-			title: "Catan",
-			minPlayers: 3,
-			maxPlayers: 4,
-			playTime: 90,
-			ageRecommendation: 10,
-			publication: {
-				publisher: "Kosmos",
-				releaseYear: 1995,
-				coverImage:
-					"https://www.spelexperten.com/bilder/artiklar/zoom/LPFI402_1.jpg?m=1751878829",
-			},
-		},
-		stock: "I lager",
-		price: 399,
-	},
-	{
-		game: {
-			id: 2,
-			title: "Terraforming Mars",
-			minPlayers: 1,
-			maxPlayers: 5,
-			playTime: 120,
-			ageRecommendation: 12,
-			publication: {
-				publisher: "FryxGames",
-				releaseYear: 2016,
-			},
-		},
-		stock: "Fåtal kvar",
-		price: 699,
-	},
-	{
-		game: {
-			id: 3,
-			title: "Wingspan",
-			minPlayers: 1,
-			maxPlayers: 5,
-			playTime: 70,
-			ageRecommendation: 10,
-			publication: {
-				publisher: "Stonemaier Games",
-				releaseYear: 2019,
-				coverImage:
-					"https://www.spelexperten.com/bilder/artiklar/zoom/STM910SE_1.jpg?m=1637219328",
-			},
-		},
-		stock: "I lager",
-		price: 599,
-	},
-	{
-		game: {
-			id: 4,
-			title: "Mysterium",
-			minPlayers: 2,
-			maxPlayers: 7,
-			playTime: 45,
-			ageRecommendation: 10,
-			publication: {
-				publisher: "Libellud",
-				releaseYear: 2015,
-				coverImage:
-					"https://www.spelexperten.com/bilder/artiklar/zoom/AMDMYST01_1.jpg?m=1755251255",
-			},
-		},
-		stock: "Slut",
-		price: 449,
-	},
-];
 
 // =======================
 //    HÄMTA CONTAINER
@@ -115,109 +17,34 @@ if (!gameListContainer) {
 }
 
 // =======================
-//    SKAPA KORT
+//    HÄMTA DOM ELEMENT
 // =======================
 
-function renderGames() {
-	// Kör bara om gameListContainer finns
-	if (gameListContainer) {
-		// Tömmer listan
-		gameListContainer.replaceChildren();
-	}
-	games.forEach(({ game, price, stock }) => {
+const openModalBtn = document.querySelector("#open-modal-btn") as HTMLButtonElement;
+const dialog = document.querySelector("#form-dialog") as HTMLDialogElement;
+const closeModalBtn = document.querySelector("#close-modal-btn") as HTMLButtonElement;
+const addNewGameForm = document.querySelector("#add-new-game") as HTMLFormElement;
 
-		// Fallback bild om det inte finns något från datan
-		const FALLBACK_COVER = "https://cdn.dribbble.com/userupload/20492562/file/original-eb6386e74bffac7624ca8ef3c9015f2b.jpg?resize=400x0";
+const inputTitle = document.querySelector("#input-title") as HTMLInputElement;
+const inputNumbPlayers = document.querySelector("#input-numb-players") as HTMLInputElement;
+const inputPlayTime = document.querySelector("#input-play-time") as HTMLInputElement;
+const inputAgeRecom = document.querySelector("#input-age-recom") as HTMLInputElement;
+const inputPublisher = document.querySelector("#input-publisher") as HTMLInputElement;
+const inputReleaseYear = document.querySelector("#input-release-year") as HTMLInputElement;
+const selectStock = document.querySelector("#select-stock") as HTMLSelectElement;
+const inputPrice = document.querySelector("#input-price") as HTMLInputElement;
 
-		// Skapa article som håller allt i kortet
-		const article = document.createElement("article");
-		article.classList.add("card", "grid", "gap-s");
 
-		// Produkt bild
-		const img = document.createElement("img");
-		img.classList.add("cover-img");
-		img.src = game.publication.coverImage ?? FALLBACK_COVER;
-		img.alt = `Omslag till ${game.title}`;
+// =======================
+//    RULLA UT SPELEN
+// =======================
 
-		// Titel
-		const title = document.createElement("h3");
-		title.textContent = game.title;
+renderGames("game-list", games);
 
-		// Pris
-		const priceItem = document.createElement("p");
-		priceItem.textContent = `${price} kr`;
 
-		// Lagerstatus
-		const stockItem = document.createElement("p");
-		stockItem.classList.add("stock-status");
-
-		// Skapa tom span (pricken)
-		const stockDot = document.createElement("span");
-		stockDot.classList.add("stock-dot");
-
-		// Lägg klass baserat på lagerstatus
-		if (stock === "I lager") {
-			stockDot.classList.add("in-stock");
-		} else if (stock === "Fåtal kvar") {
-			stockDot.classList.add("low-stock");
-		} else {
-			stockDot.classList.add("out-of-stock");
-		};
-
-		// Texten efter pricken
-		const stockText = document.createTextNode(stock);
-
-		// Montera: ● I lager
-		stockItem.append(stockDot, stockText);
-
-		// UL med klasser + aria-label
-		const featuresList = document.createElement("ul");
-		featuresList.classList.add("grid", "grid-columns-three", "gap-xs");
-		featuresList.setAttribute("aria-label", "Egenskaper");
-
-		// LI 1: players + data-type="players"
-		const playersLi = document.createElement("li");
-		playersLi.dataset.type = "players";
-		playersLi.textContent = `${game.minPlayers}–${game.maxPlayers} Spelare`;
-
-		// LI 2: playtime + data-type="playtime"
-		const playtimeLi = document.createElement("li");
-		playtimeLi.dataset.type = "playtime";
-		playtimeLi.textContent = `${game.playTime} Min`;
-
-		// LI 3: age + data-type="age"
-		const ageLi = document.createElement("li");
-		ageLi.dataset.type = "age";
-		ageLi.textContent = `${game.ageRecommendation}+ År`;
-
-		// Montera li i ul
-		featuresList.append(playersLi, playtimeLi, ageLi);
-
-		// Köp-knapp
-		const addToCartButton = document.createElement("button");
-		addToCartButton.classList.add("cart-btn");
-		// gör ett dataset som heter game id som hämtas från datan (id) och görs om till string (enbart string funkar i html)
-		addToCartButton.dataset.gameId = String(game.id);
-
-		// Om varan är slut disable button, annars lägg i varukorg
-		if (stock === "Slut") {
-			addToCartButton.textContent = "Slut i lager";
-			addToCartButton.disabled = true;
-		} else {
-			addToCartButton.textContent = "Lägg till i varukorgen";
-		};
-
-		// Montera allt i article
-		article.append(img, title, priceItem, stockItem, featuresList, addToCartButton);
-
-		// Montera allt i main som finns i html.
-		gameListContainer.append(article);
-	});
-
-};
-
-renderGames();
-
+// =======================
+//    EVENT LISTENERS
+// =======================
 
 // Klick-event för att lägga i varukorgen
 if (gameListContainer) {
@@ -245,25 +72,6 @@ if (gameListContainer) {
 	});
 };
 
-// =======================
-//    MODAL FÖR ATT
-//    SKAPA NYA KORT
-// =======================
-
-// Variabler för alla input element
-const openModalBtn = document.querySelector("#open-modal-btn") as HTMLButtonElement;
-const dialog = document.querySelector("#form-dialog") as HTMLDialogElement;
-const closeModalBtn = document.querySelector("#close-modal-btn") as HTMLButtonElement;
-const addNewGameForm = document.querySelector("#add-new-game") as HTMLFormElement;
-const inputTitle = document.querySelector("#input-title") as HTMLInputElement;
-const inputNumbPlayers = document.querySelector("#input-numb-players") as HTMLInputElement;
-const inputPlayTime = document.querySelector("#input-play-time") as HTMLInputElement;
-const inputAgeRecom = document.querySelector("#input-age-recom") as HTMLInputElement;
-const inputPublisher = document.querySelector("#input-publisher") as HTMLInputElement;
-const inputReleaseYear = document.querySelector("#input-release-year") as HTMLInputElement;
-const selectStock = document.querySelector("#select-stock") as HTMLSelectElement;
-const inputPrice = document.querySelector("#input-price") as HTMLInputElement;
-
 // Om någon klickar på + knappen, öppna modalen
 openModalBtn.addEventListener("click", () => {
 	dialog.showModal();
@@ -288,7 +96,6 @@ addNewGameForm.addEventListener("submit", (e) => {
 	const price = Number(inputPrice.value);
 
 	const [minString, maxString] = players.split("-");
-
 	const min = Number(minString);
 	const max = Number(maxString);
 
@@ -315,8 +122,12 @@ addNewGameForm.addEventListener("submit", (e) => {
 		price: price
 	};
 
+	// Lägg till det nya spelet
 	games.push(newGame);
-	renderGames();
+	renderGames("game-list", games);
+
+	// Stäng modalen
 	dialog.close();
+	// Ta bort alla som är skrivet i formuläret
 	addNewGameForm.reset();
 });
