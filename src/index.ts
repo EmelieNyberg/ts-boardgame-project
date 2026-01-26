@@ -105,7 +105,7 @@ addNewGameForm.addEventListener("submit", (e) => {
 		return;
 	}
 
-	// Detta ska läggas till i i games array.
+	// Detta ska läggas till i games array.
 	const newGame: BoardGameListing = {
 		game: {
 			id: Date.now(),
